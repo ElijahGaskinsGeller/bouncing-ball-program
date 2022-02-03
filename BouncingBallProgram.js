@@ -176,16 +176,15 @@ if (reversed == null) { reversed = false; }
 		//console.log(stage);
 		//console.log(this);
 		
-		this.touch.alpha = 0;
+		//this.touch.alpha = 0;
 		
 		let touchEnabled = false;
 		
 		let ground = this.ground;
 		let ball = new lib.ball(0, 0, -1, 0);
-		ball.x = stage.mouseX;
-		ball.y = stage.mouseY;
-		ball.scale *= Math.random()*1.5 + .5;
-		ball.children[0].graphics._fill.style = "#"+Math.floor(Math.random()*16777215).toString(16);
+		ball.alpha = 0;
+		ball.scale *= Math.random() * 1.5 + .5;
+		ball.children[0].graphics._fill.style = "#" + Math.floor(Math.random() * 16777215).toString(16);
 		this.addChild(ball);
 		
 		let _this = this;
@@ -201,77 +200,89 @@ if (reversed == null) { reversed = false; }
 		let ballBounces = [];
 		let balls = [];
 		
-		stage.canvas.addEventListener("touchstart", function(e){
+		stage.canvas.addEventListener("touchstart", function (e) {
 			//console.log("touch");
 			//console.log(e);
 			touchEnabled = true;
-			_this.touch.alpha = 1;
-			_this.click.alpha = 0;
-			if(e.touches[0].clientY < ground.y && ball != null){
+			//_this.touch.alpha = 1;
+			//_this.click.alpha = 0;
+			if (e.touches[0].clientY < ground.y && ball != null) {
 				let rad = Math.random() * Math.PI;
 				let velX = Math.cos(rad) * -500;
 				let velY = Math.sin(rad) * -500;
-				
+		
 				ball.x = e.touches[0].clientX;
 		
-				if(ball.x < ball.nominalBounds.width*ball.scale/2){
-					ball.x = ball.nominalBounds.width*ball.scale/2;
-				}else if(ball.x > stage.canvas.clientWidth - ball.nominalBounds.width*ball.scale/2){
-					ball.x = stage.canvas.clientWidth - ball.nominalBounds.width*ball.scale/2;
+				if (ball.x < ball.nominalBounds.width * ball.scale / 2) {
+					ball.x = ball.nominalBounds.width * ball.scale / 2;
+				} else if (ball.x > stage.canvas.clientWidth - ball.nominalBounds.width * ball.scale / 2) {
+					ball.x = stage.canvas.clientWidth - ball.nominalBounds.width * ball.scale / 2;
 				}
-				
+		
 				ball.y = e.touches[0].clientY;
 				ball.alpha = 1;
 				balls.push(ball);
-				ballVelocities.push({x: velX, y: velY});
-			
-				ballBounces.push(Math.random()*.25 + .55);
-			
+				ballVelocities.push({
+					x: velX,
+					y: velY
+				});
+		
+				ballBounces.push(Math.random() * .25 + .55);
+		
 				ball = new lib.ball(0, 0, -1, 0);
 				ball.x = stage.mouseX;
 				ball.y = stage.mouseY;
 				ball.alpha = 0;
 		
-				ball.scale *= Math.random()*1.5 + .5;
-			
-				ball.children[0].graphics._fill.style = "#"+Math.floor(Math.random()*16777215).toString(16);
-				
+				ball.scale *= Math.random() * 1.5 + .5;
+		
+				ball.children[0].graphics._fill.style = "#" + Math.floor(Math.random() * 16777215).toString(16);
+		
 				_this.addChild(ball);
 			}
 		})
 		
-		stage.canvas.addEventListener("click", function(e){
-			if(!touchEnabled){	
-			
+		stage.canvas.addEventListener("mousemove", function (e) {
+			ball.alpha = 1;
+			ball.x = e.clientX;
+			ball.y = e.clientY;
+		});
+		
+		stage.canvas.addEventListener("click", function (e) {
+			if (!touchEnabled) {
+		
 				//console.log("click");
 				//console.log(e);
-				_this.touch.alpha = 0;
-				_this.click.alpha = 1;
-				if(stage.mouseY < ground.y && ball != null){
+				//_this.touch.alpha = 0;
+				//_this.click.alpha = 1;
+				if (stage.mouseY < ground.y && ball != null) {
 					let rad = Math.random() * Math.PI;
 					let velX = Math.cos(rad) * -500;
 					let velY = Math.sin(rad) * -500;
-					
+		
 					ball.x = e.clientX;
-					if(ball.x < ball.nominalBounds.width*ball.scale/2){
-					ball.x = ball.nominalBounds.width*ball.scale/2+5;
-				}else if(ball.x > stage.canvas.clientWidth - ball.nominalBounds.width*ball.scale/2){
-					ball.x = stage.canvas.clientWidth - 5 - ball.nominalBounds.width*ball.scale/2;
-				}
+					if (ball.x < ball.nominalBounds.width * ball.scale / 2) {
+						ball.x = ball.nominalBounds.width * ball.scale / 2 + 5;
+					} else if (ball.x > stage.canvas.clientWidth - ball.nominalBounds.width * ball.scale / 2) {
+						ball.x = stage.canvas.clientWidth - 5 - ball.nominalBounds.width * ball.scale / 2;
+					}
 					ball.y = e.clientY;
 					balls.push(ball);
-					ballVelocities.push({x: velX, y: velY});
-				
-					ballBounces.push(Math.random()*.25 + .55);
-				
-					ball = new lib.ball(0, 0, -1, 0);
-					ball.x = stage.mouseX;
-					ball.y = stage.mouseY;
+					ballVelocities.push({
+						x: velX,
+						y: velY
+					});
 		
-					ball.scale *= Math.random()*1.5 + .5;
-				
-					ball.children[0].graphics._fill.style = "#"+Math.floor(Math.random()*16777215).toString(16);
-					
+					ballBounces.push(Math.random() * .25 + .55);
+		
+					ball = new lib.ball(0, 0, -1, 0);
+					ball.x = e.clientX;
+					ball.y = e.clientY;
+		
+					ball.scale *= Math.random() * 1.5 + .5;
+		
+					ball.children[0].graphics._fill.style = "#" + Math.floor(Math.random() * 16777215).toString(16);
+		
 					_this.addChild(ball);
 				}
 			}
@@ -279,52 +290,52 @@ if (reversed == null) { reversed = false; }
 		
 		
 		let oldTime = 0;
-		function update(time){
+		function update(time) {
 			time *= .001;
 			let deltaTime = time - oldTime;
 			oldTime = time;
-			
-			if(ball){
-				ball.x = stage.mouseX;
-				ball.y = stage.mouseY;
-			}
 		
-			for(let i = 0; i < balls.length; i++){		
-				
-				
-				balls[i].x += ballVelocities[i].x*deltaTime;
-				balls[i].y += ballVelocities[i].y*deltaTime;
-				
-				if(balls[i].x - (balls[i].nominalBounds.width*balls[i].scale/2) <= 0){
+		//	if (ball) {
+		//		ball.x = stage.mouseX;
+		//		ball.y = stage.mouseY;
+		//	}
+		
+			for (let i = 0; i < balls.length; i++) {
+		
+		
+				balls[i].x += ballVelocities[i].x * deltaTime;
+				balls[i].y += ballVelocities[i].y * deltaTime;
+		
+				if (balls[i].x - (balls[i].nominalBounds.width * balls[i].scale / 2) <= 0) {
 					ballVelocities[i].x = Math.abs(ballVelocities[i].x);
-				} else if(balls[i].x + (balls[i].nominalBounds.width*balls[i].scale/2) >=  stage.canvas.clientWidth){
+				} else if (balls[i].x + (balls[i].nominalBounds.width * balls[i].scale / 2) >= stage.canvas.clientWidth) {
 					ballVelocities[i].x = -Math.abs(ballVelocities[i].x);
 				}
-				
-				if(ballVelocities[i].y > 0 && balls[i].y + (balls[i].nominalBounds.height*balls[i].scale/2) >= ground.y){			
-					ballVelocities[i].y = ballVelocities[i].y * -ballBounces[i];			
-					
-					if(Math.abs(ballVelocities[i].y) <= 10){
+		
+				if (ballVelocities[i].y > 0 && balls[i].y + (balls[i].nominalBounds.height * balls[i].scale / 2) >= ground.y) {
+					ballVelocities[i].y = ballVelocities[i].y * -ballBounces[i];
+		
+					if (Math.abs(ballVelocities[i].y) <= 10) {
 						ballVelocities[i].y = 0;
 					}
-				}else if(ballVelocities[i].y == 0 && balls[i].y + (balls[i].nominalBounds.height*balls[i].scale/2) >= ground.y){
-					if(ballVelocities[i].x > 0){
-						ballVelocities[i].x -= friction * deltaTime;				
-						if(ballVelocities[i].x < 0){
+				} else if (ballVelocities[i].y == 0 && balls[i].y + (balls[i].nominalBounds.height * balls[i].scale / 2) >= ground.y) {
+					if (ballVelocities[i].x > 0) {
+						ballVelocities[i].x -= friction * deltaTime;
+						if (ballVelocities[i].x < 0) {
 							ballVelocities[i].x = 0
 						}
-					}else if (ballVelocities[i].x < 0){				
+					} else if (ballVelocities[i].x < 0) {
 						ballVelocities[i].x += friction * deltaTime;
-						if(ballVelocities[i].x > 0){
+						if (ballVelocities[i].x > 0) {
 							ballVelocities[i].x = 0
 						}
-					}		
-				}else if(balls[i].y + (balls[i].nominalBounds.height*balls[i].scale/2) < ground.y){
-					ballVelocities[i].y += gravity*deltaTime;
+					}
+				} else if (balls[i].y + (balls[i].nominalBounds.height * balls[i].scale / 2) < ground.y) {
+					ballVelocities[i].y += gravity * deltaTime;
 				}
 			}
-			
-				requestAnimationFrame(update);
+		
+			requestAnimationFrame(update);
 		}
 		
 		requestAnimationFrame(update);
@@ -335,15 +346,11 @@ if (reversed == null) { reversed = false; }
 	this.timeline.addTween(cjs.Tween.get(this).call(this.frame_0).wait(1));
 
 	// Layer_3
-	this.touch = new lib.touch();
-	this.touch.name = "touch";
-	this.touch.setTransform(407.5,80,1,1,0,0,0,128.5,40);
-
 	this.click = new lib.click();
 	this.click.name = "click";
 	this.click.setTransform(400,80,1,1,0,0,0,121,40);
 
-	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.click},{t:this.touch}]}).wait(1));
+	this.timeline.addTween(cjs.Tween.get(this.click).wait(1));
 
 	// Layer_1
 	this.ground = new lib.ground();
@@ -365,7 +372,7 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/BouncingBallProgram_atlas_1.png?1643931266356", id:"BouncingBallProgram_atlas_1"}
+		{src:"images/BouncingBallProgram_atlas_1.png?1643932224307", id:"BouncingBallProgram_atlas_1"}
 	],
 	preloads: []
 };
