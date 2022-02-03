@@ -3,7 +3,7 @@
 var p; // shortcut to reference prototypes
 var lib={};var ss={};var img={};
 lib.ssMetadata = [
-		{name:"BouncingBallProgram_atlas_1", frames: [[0,0,242,80]]}
+		{name:"BouncingBallProgram_atlas_1", frames: [[259,0,242,80],[0,0,257,80]]}
 ];
 
 
@@ -27,9 +27,16 @@ lib.ssMetadata = [
 
 
 
-(lib.Bitmap1 = function() {
+(lib.click_text = function() {
 	this.initialize(ss["BouncingBallProgram_atlas_1"]);
 	this.gotoAndStop(0);
+}).prototype = p = new cjs.Sprite();
+
+
+
+(lib.touch_text = function() {
+	this.initialize(ss["BouncingBallProgram_atlas_1"]);
+	this.gotoAndStop(1);
 }).prototype = p = new cjs.Sprite();
 // helper functions:
 
@@ -50,6 +57,27 @@ function getMCSymbolPrototype(symbol, nominalBounds, frameBounds) {
 	}
 
 
+(lib.touch = function(mode,startPosition,loop,reversed) {
+if (loop == null) { loop = true; }
+if (reversed == null) { reversed = false; }
+	var props = new Object();
+	props.mode = mode;
+	props.startPosition = startPosition;
+	props.labels = {};
+	props.loop = loop;
+	props.reversed = reversed;
+	cjs.MovieClip.apply(this,[props]);
+
+	// Layer_1
+	this.instance = new lib.touch_text();
+
+	this.timeline.addTween(cjs.Tween.get(this.instance).wait(1));
+
+	this._renderFirstFrame();
+
+}).prototype = getMCSymbolPrototype(lib.touch, new cjs.Rectangle(0,0,257,80), null);
+
+
 (lib.ground = function(mode,startPosition,loop,reversed) {
 if (loop == null) { loop = true; }
 if (reversed == null) { reversed = false; }
@@ -68,9 +96,37 @@ if (reversed == null) { reversed = false; }
 
 	this.timeline.addTween(cjs.Tween.get(this.shape).wait(1));
 
+	// Layer_2
+	this.shape_1 = new cjs.Shape();
+	this.shape_1.graphics.f("#000000").s().p("EhN/ACrIAAlVMCb/AAAIAAFVg");
+	this.shape_1.setTransform(499.225,17.1);
+
+	this.timeline.addTween(cjs.Tween.get(this.shape_1).wait(1));
+
 	this._renderFirstFrame();
 
-}).prototype = getMCSymbolPrototype(lib.ground, new cjs.Rectangle(-1,-1,994.9,2), null);
+}).prototype = getMCSymbolPrototype(lib.ground, new cjs.Rectangle(-1,-1,999.5,35.2), null);
+
+
+(lib.click = function(mode,startPosition,loop,reversed) {
+if (loop == null) { loop = true; }
+if (reversed == null) { reversed = false; }
+	var props = new Object();
+	props.mode = mode;
+	props.startPosition = startPosition;
+	props.labels = {};
+	props.loop = loop;
+	props.reversed = reversed;
+	cjs.MovieClip.apply(this,[props]);
+
+	// Layer_1
+	this.instance = new lib.click_text();
+
+	this.timeline.addTween(cjs.Tween.get(this.instance).wait(1));
+
+	this._renderFirstFrame();
+
+}).prototype = getMCSymbolPrototype(lib.click, new cjs.Rectangle(0,0,242,80), null);
 
 
 (lib.ball = function(mode,startPosition,loop,reversed) {
@@ -117,7 +173,12 @@ if (reversed == null) { reversed = false; }
 		if(this.totalFrames == 1) {
 			this.isSingleFrame = true;
 		}
-		console.log(stage);
+		//console.log(stage);
+		//console.log(this);
+		
+		this.touch.alpha = 0;
+		
+		let touchEnabled = false;
 		
 		let ground = this.ground;
 		let ball = new lib.ball(0, 0, -1, 0);
@@ -132,7 +193,7 @@ if (reversed == null) { reversed = false; }
 		let gravity = 1000;
 		let friction = 300;
 		
-		console.log(ball);
+		//console.log(ball);
 		
 		
 		
@@ -140,16 +201,27 @@ if (reversed == null) { reversed = false; }
 		let ballBounces = [];
 		let balls = [];
 		
-		stage.canvas.addEventListener("touch", function(e){
-			console.log("touch");
-			console.log(e);
-			if(stage.mouseY < ground.y && ball != null){
+		stage.canvas.addEventListener("touchstart", function(e){
+			//console.log("touch");
+			//console.log(e);
+			touchEnabled = true;
+			_this.touch.alpha = 1;
+			_this.click.alpha = 0;
+			if(e.touches[0].clientY < ground.y && ball != null){
 				let rad = Math.random() * Math.PI;
 				let velX = Math.cos(rad) * -500;
 				let velY = Math.sin(rad) * -500;
 				
-				ball.x = e.clientX;
-				ball.y = e.clientY;
+				ball.x = e.touches[0].clientX;
+		
+				if(ball.x < ball.nominalBounds.width*ball.scale/2){
+					ball.x = ball.nominalBounds.width*ball.scale/2;
+				}else if(ball.x > stage.canvas.clientWidth - ball.nominalBounds.width*ball.scale/2){
+					ball.x = stage.canvas.clientWidth - ball.nominalBounds.width*ball.scale/2;
+				}
+				
+				ball.y = e.touches[0].clientY;
+				ball.alpha = 1;
 				balls.push(ball);
 				ballVelocities.push({x: velX, y: velY});
 			
@@ -158,6 +230,7 @@ if (reversed == null) { reversed = false; }
 				ball = new lib.ball(0, 0, -1, 0);
 				ball.x = stage.mouseX;
 				ball.y = stage.mouseY;
+				ball.alpha = 0;
 		
 				ball.scale *= Math.random()*1.5 + .5;
 			
@@ -168,29 +241,39 @@ if (reversed == null) { reversed = false; }
 		})
 		
 		stage.canvas.addEventListener("click", function(e){
-			console.log("click");
-			console.log(e);
-			if(stage.mouseY < ground.y && ball != null){
-				let rad = Math.random() * Math.PI;
-				let velX = Math.cos(rad) * -500;
-				let velY = Math.sin(rad) * -500;
+			if(!touchEnabled){	
+			
+				//console.log("click");
+				//console.log(e);
+				_this.touch.alpha = 0;
+				_this.click.alpha = 1;
+				if(stage.mouseY < ground.y && ball != null){
+					let rad = Math.random() * Math.PI;
+					let velX = Math.cos(rad) * -500;
+					let velY = Math.sin(rad) * -500;
+					
+					ball.x = e.clientX;
+					if(ball.x < ball.nominalBounds.width*ball.scale/2){
+					ball.x = ball.nominalBounds.width*ball.scale/2+5;
+				}else if(ball.x > stage.canvas.clientWidth - ball.nominalBounds.width*ball.scale/2){
+					ball.x = stage.canvas.clientWidth - 5 - ball.nominalBounds.width*ball.scale/2;
+				}
+					ball.y = e.clientY;
+					balls.push(ball);
+					ballVelocities.push({x: velX, y: velY});
 				
-				ball.x = e.clientX;
-				ball.y = e.clientY;
-				balls.push(ball);
-				ballVelocities.push({x: velX, y: velY});
-			
-				ballBounces.push(Math.random()*.25 + .55);
-			
-				ball = new lib.ball(0, 0, -1, 0);
-				ball.x = stage.mouseX;
-				ball.y = stage.mouseY;
+					ballBounces.push(Math.random()*.25 + .55);
+				
+					ball = new lib.ball(0, 0, -1, 0);
+					ball.x = stage.mouseX;
+					ball.y = stage.mouseY;
 		
-				ball.scale *= Math.random()*1.5 + .5;
-			
-				ball.children[0].graphics._fill.style = "#"+Math.floor(Math.random()*16777215).toString(16);
+					ball.scale *= Math.random()*1.5 + .5;
 				
-				_this.addChild(ball);
+					ball.children[0].graphics._fill.style = "#"+Math.floor(Math.random()*16777215).toString(16);
+					
+					_this.addChild(ball);
+				}
 			}
 		});
 		
@@ -212,8 +295,10 @@ if (reversed == null) { reversed = false; }
 				balls[i].x += ballVelocities[i].x*deltaTime;
 				balls[i].y += ballVelocities[i].y*deltaTime;
 				
-				if(balls[i].x - (balls[i].nominalBounds.width*balls[i].scale/2) <= 0 || balls[i].x + (balls[i].nominalBounds.width*balls[i].scale/2) >=  stage.canvas.width){
-					ballVelocities[i].x *= -1;
+				if(balls[i].x - (balls[i].nominalBounds.width*balls[i].scale/2) <= 0){
+					ballVelocities[i].x = Math.abs(ballVelocities[i].x);
+				} else if(balls[i].x + (balls[i].nominalBounds.width*balls[i].scale/2) >=  stage.canvas.clientWidth){
+					ballVelocities[i].x = -Math.abs(ballVelocities[i].x);
 				}
 				
 				if(ballVelocities[i].y > 0 && balls[i].y + (balls[i].nominalBounds.height*balls[i].scale/2) >= ground.y){			
@@ -243,17 +328,22 @@ if (reversed == null) { reversed = false; }
 		}
 		
 		requestAnimationFrame(update);
-		console.log(this.ground);
+		//console.log(this.ground);
 	}
 
 	// actions tween:
 	this.timeline.addTween(cjs.Tween.get(this).call(this.frame_0).wait(1));
 
 	// Layer_3
-	this.instance = new lib.Bitmap1();
-	this.instance.setTransform(279,40);
+	this.touch = new lib.touch();
+	this.touch.name = "touch";
+	this.touch.setTransform(407.5,80,1,1,0,0,0,128.5,40);
 
-	this.timeline.addTween(cjs.Tween.get(this.instance).wait(1));
+	this.click = new lib.click();
+	this.click.name = "click";
+	this.click.setTransform(400,80,1,1,0,0,0,121,40);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.click},{t:this.touch}]}).wait(1));
 
 	// Layer_1
 	this.ground = new lib.ground();
@@ -265,7 +355,7 @@ if (reversed == null) { reversed = false; }
 	this._renderFirstFrame();
 
 }).prototype = p = new lib.AnMovieClip();
-p.nominalBounds = new cjs.Rectangle(318.6,340,593.9,199.5);
+p.nominalBounds = new cjs.Rectangle(318.6,340,598.9,233.20000000000005);
 // library properties:
 lib.properties = {
 	id: 'BA76AC323F59FF44B82046D00DC7B398',
@@ -275,7 +365,7 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/BouncingBallProgram_atlas_1.png?1643929146477", id:"BouncingBallProgram_atlas_1"}
+		{src:"images/BouncingBallProgram_atlas_1.png?1643931266356", id:"BouncingBallProgram_atlas_1"}
 	],
 	preloads: []
 };
