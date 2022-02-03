@@ -296,6 +296,11 @@ if (reversed == null) { reversed = false; }
 			time *= .001;
 			let deltaTime = time - oldTime;
 			oldTime = time;
+			if(touchEnabled){
+				ball.alpha = 0;
+			}else{
+				ball.alpha = 1;
+			}
 		
 			//	if (ball) {
 			//		ball.x = stage.mouseX;
@@ -374,7 +379,7 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/BouncingBallProgram_atlas_1.png?1643932449192", id:"BouncingBallProgram_atlas_1"}
+		{src:"images/BouncingBallProgram_atlas_1.png?1643932633763", id:"BouncingBallProgram_atlas_1"}
 	],
 	preloads: []
 };
