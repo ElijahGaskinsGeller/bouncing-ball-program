@@ -140,12 +140,15 @@ if (reversed == null) { reversed = false; }
 		let ballBounces = [];
 		let balls = [];
 		
-		stage.canvas.addEventListener("click", function(){
+		stage.canvas.addEventListener("click", function(e){
+			console.log(e);
 			if(stage.mouseY < ground.y && ball != null){
 				let rad = Math.random() * Math.PI;
 				let velX = Math.cos(rad) * -500;
 				let velY = Math.sin(rad) * -500;
 				
+				ball.x = e.clientX;
+				ball.y = e.clientY;
 				balls.push(ball);
 				ballVelocities.push({x: velX, y: velY});
 			
@@ -244,7 +247,7 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/BouncingBallProgram_atlas_1.png?1643927837485", id:"BouncingBallProgram_atlas_1"}
+		{src:"images/BouncingBallProgram_atlas_1.png?1643928643618", id:"BouncingBallProgram_atlas_1"}
 	],
 	preloads: []
 };
