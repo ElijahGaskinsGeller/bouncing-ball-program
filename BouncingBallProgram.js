@@ -243,9 +243,11 @@ if (reversed == null) { reversed = false; }
 		})
 		
 		stage.canvas.addEventListener("mousemove", function (e) {
-			ball.alpha = 1;
-			ball.x = e.clientX;
-			ball.y = e.clientY;
+			if (!touchEnabled) {
+				ball.alpha = 1;
+				ball.x = e.clientX;
+				ball.y = e.clientY;
+			}
 		});
 		
 		stage.canvas.addEventListener("click", function (e) {
@@ -295,10 +297,10 @@ if (reversed == null) { reversed = false; }
 			let deltaTime = time - oldTime;
 			oldTime = time;
 		
-		//	if (ball) {
-		//		ball.x = stage.mouseX;
-		//		ball.y = stage.mouseY;
-		//	}
+			//	if (ball) {
+			//		ball.x = stage.mouseX;
+			//		ball.y = stage.mouseY;
+			//	}
 		
 			for (let i = 0; i < balls.length; i++) {
 		
@@ -372,7 +374,7 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/BouncingBallProgram_atlas_1.png?1643932224307", id:"BouncingBallProgram_atlas_1"}
+		{src:"images/BouncingBallProgram_atlas_1.png?1643932449192", id:"BouncingBallProgram_atlas_1"}
 	],
 	preloads: []
 };
