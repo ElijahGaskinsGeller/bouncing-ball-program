@@ -140,7 +140,35 @@ if (reversed == null) { reversed = false; }
 		let ballBounces = [];
 		let balls = [];
 		
+		stage.canvas.addEventListener("touch", function(e){
+			console.log("touch");
+			console.log(e);
+			if(stage.mouseY < ground.y && ball != null){
+				let rad = Math.random() * Math.PI;
+				let velX = Math.cos(rad) * -500;
+				let velY = Math.sin(rad) * -500;
+				
+				ball.x = e.clientX;
+				ball.y = e.clientY;
+				balls.push(ball);
+				ballVelocities.push({x: velX, y: velY});
+			
+				ballBounces.push(Math.random()*.25 + .55);
+			
+				ball = new lib.ball(0, 0, -1, 0);
+				ball.x = stage.mouseX;
+				ball.y = stage.mouseY;
+		
+				ball.scale *= Math.random()*1.5 + .5;
+			
+				ball.children[0].graphics._fill.style = "#"+Math.floor(Math.random()*16777215).toString(16);
+				
+				_this.addChild(ball);
+			}
+		})
+		
 		stage.canvas.addEventListener("click", function(e){
+			console.log("click");
 			console.log(e);
 			if(stage.mouseY < ground.y && ball != null){
 				let rad = Math.random() * Math.PI;
@@ -247,7 +275,7 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/BouncingBallProgram_atlas_1.png?1643928643618", id:"BouncingBallProgram_atlas_1"}
+		{src:"images/BouncingBallProgram_atlas_1.png?1643929146477", id:"BouncingBallProgram_atlas_1"}
 	],
 	preloads: []
 };
