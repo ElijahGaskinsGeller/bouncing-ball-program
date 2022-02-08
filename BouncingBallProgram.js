@@ -230,8 +230,8 @@ if (reversed == null) { reversed = false; }
 				ballBounces.push(Math.random() * .25 + .55);
 		
 				ball = new lib.ball(0, 0, -1, 0);
-				ball.x = stage.mouseX;
-				ball.y = stage.mouseY;
+				ball.x = e.touches[0].clientX;
+				ball.y = e.touches[0].clientY;
 				ball.alpha = 0;
 		
 				ball.scale *= Math.random() * 1.5 + .5;
@@ -257,7 +257,7 @@ if (reversed == null) { reversed = false; }
 				//console.log(e);
 				//_this.touch.alpha = 0;
 				//_this.click.alpha = 1;
-				if (stage.mouseY < ground.y && ball != null) {
+				if (e.clientY < ground.y && ball != null) {
 					let rad = Math.random() * Math.PI;
 					let velX = Math.cos(rad) * -500;
 					let velY = Math.sin(rad) * -500;
@@ -379,7 +379,7 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/BouncingBallProgram_atlas_1.png?1643932633763", id:"BouncingBallProgram_atlas_1"}
+		{src:"images/BouncingBallProgram_atlas_1.png?1644286032734", id:"BouncingBallProgram_atlas_1"}
 	],
 	preloads: []
 };
